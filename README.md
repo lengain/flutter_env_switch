@@ -1,85 +1,112 @@
 # Flutter环境切换工具
 
-这个工具用于在Mac系统中快速切换不同Flutter开发环境（鸿蒙开发和iOS开发）的配置。
+用于在 macOS 上快速切换鸿蒙 Flutter 与 iOS Flutter 开发环境。
 
-## 目录放置要求（重要）
+## 核心能力
 
-脚本会按固定路径使用Flutter SDK和PUB缓存目录。如果目录位置不对，可能出现“Flutter SDK路径不存在”或缓存相关问题。
+- 自动创建目录：`~/flutter/harmony`、`~/flutter/ios`
+- 自动检测并下载 Flutter 仓库（缺失时）
+- 自动检测并创建 `PUB_CACHE` 目录
+- 自动写入 `~/.flutter_env` 加载逻辑到 `~/.zshrc` 或 `~/.bash_profile`
+- Shell 配置写入支持块级去重，避免重复追加
 
-- 鸿蒙Flutter必须放在：`~/flutter/harmony/flutter_flutter`
-- iOS Flutter必须放在：`~/flutter/ios/flutter`
-- 鸿蒙PUB_CACHE目录建议放在：`~/flutter/harmony/pub`
-- iOS PUB_CACHE目录建议放在：`~/flutter/ios/pub`
+## 目录约定
 
-请先按以上路径准备好目录（不存在可手动创建），再执行安装和环境切换命令。
+脚本固定使用以下目录（不存在会自动创建）：
 
-## 安装说明
+- 鸿蒙 Flutter：`~/flutter/harmony/flutter_flutter`
+- iOS Flutter：`~/flutter/ios/flutter`
+- 鸿蒙 PUB_CACHE：`~/flutter/harmony/pub`
+- iOS PUB_CACHE：`~/flutter/ios/pub`
 
-1. 将`flutter_env_switch.sh`脚本复制到您的系统中，例如：
+## 安装
+
+1. 复制脚本到本地（示例）：
    ```bash
-   cp flutter_env_switch.sh ~/bin/
+   cp flutter_env_switch.sh ~/
    ```
-
 2. 添加执行权限：
    ```bash
-   chmod +x ~/bin/flutter_env_switch.sh
+   chmod +x ~/flutter_env_switch.sh
    ```
-
-3. 在您的shell配置文件（~/.zshrc 或 ~/.bash_profile）中添加以下内容：
+3. 使用 `bash` 执行脚本：
    ```bash
-   # 加载Flutter环境配置
-   if [ -f ~/.flutter_env ]; then
-       source ~/.flutter_env
-   fi
+   bash ~/flutter_env_switch.sh check
    ```
 
 ## 使用方法
 
-1. 切换到鸿蒙开发环境：
+1. 切换到鸿蒙环境：
    ```bash
-   flutter_env_switch.sh harmony
+   bash ~/flutter_env_switch.sh harmony
+   ```
+2. 切换到 iOS 环境：
+   ```bash
+   bash ~/flutter_env_switch.sh ios
+   ```
+3. 查看当前环境：
+   ```bash
+   bash ~/flutter_env_switch.sh show
+   ```
+4. 执行环境检查与自动修复：
+   ```bash
+   bash ~/flutter_env_switch.sh check
    ```
 
-2. 切换到iOS开发环境：
-   ```bash
-   flutter_env_switch.sh ios
-   ```
+## 环境变量说明
 
-3. 查看当前环境配置：
-   ```bash
-   flutter_env_switch.sh show
-   ```
+### 鸿蒙环境（`harmony`）
 
-4. 检查环境配置：
-   ```bash
-   flutter_env_switch.sh check
-   ```
+- `PUB_CACHE=$HOME/flutter/harmony/pub`
+- `PUB_HOSTED_URL=https://pub-web.flutter-io.cn`
+- `FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn`
+- `FLUTTER_OHOS_STORAGE_BASE_URL=https://flutter-ohos.obs.cn-south-1.myhuaweicloud.com`
+- `FLUTTER_GIT_URL=https://gitcode.com/openharmony-tpc/flutter_flutter.git`
+- `PATH` 追加：`$HOME/flutter/harmony/flutter_flutter/bin`
 
-## 环境说明
+### iOS 环境（`ios`）
 
-### 鸿蒙开发环境
-- PUB_HOSTED_URL: https://pub.flutter-io.cn
-- FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
-- Flutter路径: $HOME/flutter_harmony/bin
-
-### iOS开发环境
-- PUB_HOSTED_URL: https://pub.dev
-- FLUTTER_STORAGE_BASE_URL: https://storage.googleapis.com
-- Flutter路径: $HOME/flutter_ios/bin
-
-## 功能特性
-
-1. 自动检查Flutter SDK路径是否存在
-2. 显示当前Flutter版本信息
-3. 检查shell配置文件是否正确配置
-4. 提供友好的错误提示
-5. 支持环境配置持久化
+- `PUB_CACHE=$HOME/flutter/ios/pub`
+- `PUB_HOSTED_URL=https://pub.dev`
+- `FLUTTER_STORAGE_BASE_URL=https://storage.googleapis.com`
+- `FLUTTER_GIT_URL=https://github.com/flutter/flutter.git`
+- `PATH` 追加：`$HOME/flutter/ios/flutter/bin`
 
 ## 注意事项
 
-1. 请确保您的系统中已经安装了对应版本的Flutter SDK
-2. 初始目录请按脚本约定放置：鸿蒙Flutter在`~/flutter/harmony/flutter_flutter`、鸿蒙PUB_CACHE在`~/flutter/harmony/pub`；iOS Flutter在`~/flutter/ios/flutter`、iOS PUB_CACHE在`~/flutter/ios/pub`
-3. 切换环境后，需要重新打开终端或执行`source ~/.flutter_env`使配置生效
-4. 环境配置会保存在`~/.flutter_env`文件中
-5. 脚本必须使用bash运行
-6. 如果遇到问题，可以使用`check`命令检查环境配置
+1. 请确保系统已安装 `git`（脚本会使用 `git clone` 下载 Flutter 仓库）
+2. 首次切换某个环境时，Flutter 可能会初始化下载工具链，耗时会更长
+3. 环境配置保存在 `~/.flutter_env`，切换后建议重新打开终端
+4. 如遇异常，可先执行：
+   ```bash
+   bash ~/flutter_env_switch.sh check
+   ```
+
+## License
+
+本项目使用 `MIT License` 开源，详见仓库根目录下的 `LICENSE` 文件。
+
+## FAQ
+
+### 1. 为什么第一次切换环境很慢？
+
+首次切换时，Flutter 可能会下载 Dart SDK 和工具缓存，这是正常现象。后续再切换通常会明显更快。
+
+### 2. 为什么日志里会出现 `Downloading ...`？
+
+这通常是 Flutter 首次初始化阶段输出的信息，不一定是错误。脚本会自动重试并尽量提取最终的 `Flutter` 版本行。
+
+### 3. 下载中断后如何处理？
+
+可以先执行：
+
+```bash
+bash ~/flutter_env_switch.sh check
+```
+
+如果仍失败，可清理缓存后重试：
+
+```bash
+rm -rf ~/flutter/harmony/flutter_flutter/bin/cache
+rm -rf ~/flutter/ios/flutter/bin/cache
+```
