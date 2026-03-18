@@ -312,6 +312,11 @@ EOF
     
     echo "已切换到 $env 环境"
     show_current_env
+
+    # 重启 Dart 服务
+    pkill -9 -f dartvm 2>/dev/null
+    pkill -9 -f dart 2>/dev/null
+    echo "为了使IDE使用新的环境，请重启IDE"
 }
 
 # 检查shell配置文件
