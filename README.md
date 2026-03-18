@@ -1,6 +1,6 @@
 # Flutter环境切换工具
 
-用于在 macOS 上快速切换鸿蒙 Flutter 与 iOS Flutter 开发环境。
+用于在 macOS / Windows上快速切换鸿蒙 Flutter 与 iOS Flutter 开发环境。
 
 ## 核心能力
 
